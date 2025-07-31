@@ -12,20 +12,25 @@ async function handleImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
+    // Validate file type
+    if (!file.type.match('image.*')) {
+        alert('Please upload an image file (JPEG, PNG, etc.)');
+        return;
+    }
+    
     const preview = document.getElementById('imagePreview');
     const ocrResult = document.getElementById('ocrResult');
     const responseDiv = document.getElementById('response');
     
     // Clear previous results
     responseDiv.innerHTML = '';
-    ocrResult.innerHTML = '<h3>Scanning Image...</h3><div class="progress-bar"><div class="progress" id="ocrProgress"></div></div>';
+    ocrResult.innerHTML = '<h4>Scanning Image...</h4><div class="progress-bar"><div class="progress" id="ocrProgress"></div></div>';
     
     // Show preview
     preview.src = URL.createObjectURL(file);
     preview.style.display = 'block';
     
     try {
-        // Use Tesseract.js for OCR
         const result = await Tesseract.recognize(
             file,
             'eng',
@@ -39,103 +44,91 @@ async function handleImageUpload(event) {
             }
         );
         
+        const extractedText = result.data.text.trim();
+        
+        // Validate OCR result
+        if (!isMeaningfulText(extractedText)) {
+            ocrResult.innerHTML = `
+                <h4>Scan Complete</h4>
+                <p class="text-danger">No readable text found in image.</p>
+                <p>Please try a clearer image with visible text</p>
+            `;
+            return;
+        }
+        
         // Display OCR results
         ocrResult.innerHTML = `
-            <h3>Text from Image:</h3>
-            <p>${result.data.text}</p>
-            <button class="btn btn-sm btn-info" id="useOcrText">Use this text for AI</button>
+            <h4>Extracted Text:</h4>
+            <div class="card bg-light p-3 mb-2">
+                <p>${extractedText}</p>
+            </div>
+            <button class="btn btn-sm btn-info" id="useOcrText">Use this text</button>
         `;
         
-        // Add event listener to use OCR text
         document.getElementById('useOcrText').addEventListener('click', () => {
-            document.getElementById('userInput').value = result.data.text;
-            ocrResult.innerHTML += '<p class="text-success mt-2">Text copied to input field. Click "Submit Text" to send to AI.</p>';
+            document.getElementById('userInput').value = extractedText;
+            ocrResult.innerHTML += '<p class="text-success mt-2">✓ Text copied to input field</p>';
         });
         
     } catch (error) {
-        ocrResult.innerHTML = `<p class="text-danger">Error scanning image: ${error.message}</p>`;
+        ocrResult.innerHTML = `
+            <p class="text-danger">Error scanning image: ${error.message}</p>
+            <p>Please try a different image</p>
+        `;
     }
 }
 
-function sendMessage() {
-    const userInput = document.getElementById('userInput').value;
-    if (!userInput.trim()) {
-        alert('Please enter a question or upload an image');
+function isMeaningfulText(text) {
+    if (!text || text.length < 10) return false;
+    
+    // Count words with at least 3 letters
+    const words = text.split(/\s+/).filter(word => word.length >= 3);
+    
+    // Check ratio of letters to symbols
+    const letterRatio = text.replace(/[^a-zA-Z]/g, '').length / text.length;
+    
+    return words.length >= 2 && letterRatio > 0.3;
+}
+
+async function sendMessage() {
+    const userInput = document.getElementById('userInput').value.trim();
+    if (!userInput) {
+        alert('Please enter some text or upload an image with text');
         return;
     }
     
     const responseDiv = document.getElementById('response');
-    responseDiv.innerHTML = 'Waiting for AI response...';
+    responseDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="spinner-border text-primary mr-2"></div>
+            <span>Processing your request...</span>
+        </div>
+    `;
     
-    // Note: API keys should NEVER be exposed in client-side code
-    // This is just for demonstration - in production, use a backend service
-    const apiUrl = "https://api.just2chat.cn/v1/chat/completions";
-    const apiKey = "sk-AjyTBfmjHsUi5CprmHv4qRdRU6PC0UmsmG7z4HHWEHUkmP0n";
-    
-    const requestData = {
-        model: "deepseek-v3",
-        messages: [{
-            role: "user",
-            content: userInput
-        }],
-        stream: true
-    };
-    
-    fetch(apiUrl, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => {
+    try {
+        // IMPORTANT: In production, replace this with your backend endpoint
+        const response = await fetch('YOUR_BACKEND_ENDPOINT', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: userInput })
+        });
+        
         if (!response.ok) {
-            throw new Error(`Request failed with status: ${response.status}`);
+            throw new Error(`Server responded with ${response.status}`);
         }
         
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let fullResponse = '';
+        const data = await response.json();
+        responseDiv.innerHTML = marked.parse(data.response);
         
-        function readStream() {
-            return reader.read().then(({ done, value }) => {
-                if (done) {
-                    return;
-                }
-                
-                const chunk = decoder.decode(value, { stream: true });
-                try {
-                    // Process each line (streaming responses often come as multiple chunks)
-                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
-                    lines.forEach(line => {
-                        if (line.startsWith('data: ')) {
-                            const data = line.substring(6);
-                            if (data === '[DONE]') return;
-                            
-                            try {
-                                const parsed = JSON.parse(data);
-                                if (parsed.choices && parsed.choices[0].delta.content) {
-                                    fullResponse += parsed.choices[0].delta.content;
-                                    responseDiv.innerHTML = marked.parse(fullResponse);
-                                }
-                            } catch (e) {
-                                console.error('Error parsing JSON:', e);
-                            }
-                        }
-                    });
-                } catch (e) {
-                    console.error('Error processing chunk:', e);
-                }
-                
-                return readStream();
-            });
-        }
-        
-        return readStream();
-    })
-    .catch(error => {
-        console.error("Request error:", error);
-        responseDiv.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
-    });
+    } catch (error) {
+        console.error("Error:", error);
+        responseDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${error.message}
+                <p>Please try again later</p>
+            </div>
+        `;
+    }
 }
