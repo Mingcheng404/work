@@ -1,24 +1,55 @@
-#response {
+body {
+    padding: 20px;
+}
+
+.button-group {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+#response, #ocrResult {
     margin-top: 20px;
-    padding: 10px;
+    padding: 15px;
     min-height: 50px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    background-color: #f9f9f9;
 }
 
-#response h3 {
+#response h3, #ocrResult h3 {
     color: #333;
     font-size: 1.2em;
+    margin-bottom: 10px;
 }
 
 #response strong {
     color: #d9534f;
 }
 
-#response ul {
+#response ul, #ocrResult ul {
     padding-left: 20px;
 }
 
-#response li {
+#response li, #ocrResult li {
     margin-bottom: 5px;
+}
+
+#previewContainer {
+    text-align: center;
+}
+
+.progress-bar {
+    margin-top: 10px;
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: #28a745;
+    width: 0%;
+    transition: width 0.3s;
 }
