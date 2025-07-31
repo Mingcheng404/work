@@ -1,34 +1,84 @@
 body {
     padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 800px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .button-group {
-    margin: 15px 0;
+    margin: 20px 0;
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    min-width: 120px;
 }
 
 #response, #ocrResult {
-    margin-top: 20px;
-    padding: 15px;
-    min-height: 50px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
 }
 
 #response h3, #ocrResult h3 {
-    color: #333;
-    font-size: 1.2em;
-    margin-bottom: 10px;
+    color: #2c3e50;
+    margin-bottom: 15px;
 }
 
-#response strong {
-    color: #d9534f;
+.progress-bar {
+    margin: 15px 0;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-#response ul, #ocrResult ul {
-    padding-left: 20px;
+.progress {
+    height: 100%;
+    background-color: #28a745;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.card {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
 }
 
 #response li, #ocrResult li {
