@@ -1,17 +1,71 @@
 document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    
     submitBtn.addEventListener('click', sendMessage);
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', handleImageUpload);
 });
+
+async function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const preview = document.getElementById('imagePreview');
+    const ocrResult = document.getElementById('ocrResult');
+    const responseDiv = document.getElementById('response');
+    
+    // Clear previous results
+    responseDiv.innerHTML = '';
+    ocrResult.innerHTML = '<h3>Scanning Image...</h3><div class="progress-bar"><div class="progress" id="ocrProgress"></div></div>';
+    
+    // Show preview
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+    
+    try {
+        // Use Tesseract.js for OCR
+        const result = await Tesseract.recognize(
+            file,
+            'eng',
+            {
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        const progress = document.getElementById('ocrProgress');
+                        progress.style.width = `${m.progress * 100}%`;
+                    }
+                }
+            }
+        );
+        
+        // Display OCR results
+        ocrResult.innerHTML = `
+            <h3>Text from Image:</h3>
+            <p>${result.data.text}</p>
+            <button class="btn btn-sm btn-info" id="useOcrText">Use this text for AI</button>
+        `;
+        
+        // Add event listener to use OCR text
+        document.getElementById('useOcrText').addEventListener('click', () => {
+            document.getElementById('userInput').value = result.data.text;
+            ocrResult.innerHTML += '<p class="text-success mt-2">Text copied to input field. Click "Submit Text" to send to AI.</p>';
+        });
+        
+    } catch (error) {
+        ocrResult.innerHTML = `<p class="text-danger">Error scanning image: ${error.message}</p>`;
+    }
+}
 
 function sendMessage() {
     const userInput = document.getElementById('userInput').value;
     if (!userInput.trim()) {
-        alert('Please enter a question');
+        alert('Please enter a question or upload an image');
         return;
     }
     
     const responseDiv = document.getElementById('response');
-    responseDiv.innerHTML = 'Waiting for response...';
+    responseDiv.innerHTML = 'Waiting for AI response...';
     
     // Note: API keys should NEVER be exposed in client-side code
     // This is just for demonstration - in production, use a backend service
@@ -82,6 +136,6 @@ function sendMessage() {
     })
     .catch(error => {
         console.error("Request error:", error);
-        responseDiv.innerHTML = `Error: ${error.message}`;
+        responseDiv.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
     });
 }
