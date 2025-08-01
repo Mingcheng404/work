@@ -11,21 +11,44 @@ const userInput = document.getElementById('userInput');
 const response = document.getElementById('response');
 const responseContent = document.getElementById('responseContent');
 const loader = document.getElementById('loader');
+const translateBtn = document.getElementById('translateBtn');
 
-// Sample user data
-const users = [
-    { email: 'user@example.com', password: 'password123', name: 'John Doe', avatar: 'JD' },
-    { email: 'doctor@example.com', password: 'securepass', name: 'Dr. Smith', avatar: 'DS' }
+// User accounts (in a real app, this would be stored on a server)
+let users = JSON.parse(localStorage.getItem('medai_users')) || [
+    { 
+        id: 1, 
+        email: 'user@example.com', 
+        password: 'password123', 
+        name: 'John Doe', 
+        avatar: 'JD',
+        history: [] 
+    },
+    { 
+        id: 2, 
+        email: 'doctor@example.com', 
+        password: 'securepass', 
+        name: 'Dr. Smith', 
+        avatar: 'DS',
+        history: [] 
+    }
 ];
 
 // Current user
 let currentUser = null;
+
+// Initialize local storage
+function initLocalStorage() {
+    if (!localStorage.getItem('medai_users')) {
+        localStorage.setItem('medai_users', JSON.stringify(users));
+    }
+}
 
 // Login function
 function login(email, password) {
     const user = users.find(u => u.email === email && u.password === password);
     if (user) {
         currentUser = user;
+        localStorage.setItem('medai_lastUser', user.email);
         showApp();
         return true;
     }
@@ -34,11 +57,23 @@ function login(email, password) {
 
 // Google login simulation
 function googleLogin() {
-    currentUser = {
+    const googleUser = {
+        id: Date.now(),
         name: 'Google User',
         avatar: 'GU',
-        email: 'googleuser@example.com'
+        email: 'googleuser@example.com',
+        history: []
     };
+    
+    // Add to users if not exists
+    const existingUser = users.find(u => u.email === googleUser.email);
+    if (!existingUser) {
+        users.push(googleUser);
+        localStorage.setItem('medai_users', JSON.stringify(users));
+    }
+    
+    currentUser = googleUser;
+    localStorage.setItem('medai_lastUser', googleUser.email);
     showApp();
 }
 
@@ -52,6 +87,7 @@ function showApp() {
 // Logout function
 function logout() {
     currentUser = null;
+    localStorage.removeItem('medai_lastUser');
     appContainer.style.display = 'none';
     loginPage.style.display = 'flex';
     // Clear input fields
@@ -62,99 +98,7 @@ function logout() {
     responseContent.innerHTML = '';
 }
 
-// Simulate AI response
-function generateAIResponse(question) {
-    // This is a mock response - in a real app, this would come from an API
-    const responses = {
-        "headache": {
-            title: "Headache Relief Recommendations",
-            content: `<p>For headache relief, consider the following over-the-counter options:</p>
-            <h3>Common Medications:</h3>
-            <ul>
-                <li><strong>Acetaminophen (Tylenol)</strong>: 500-1000mg every 4-6 hours as needed</li>
-                <li><strong>Ibuprofen (Advil, Motrin)</strong>: 200-400mg every 4-6 hours as needed</li>
-                <li><strong>Aspirin</strong>: 325-650mg every 4 hours as needed</li>
-                <li><strong>Naproxen (Aleve)</strong>: 220mg every 8-12 hours as needed</li>
-            </ul>
-            <h3>Recommendations:</h3>
-            <ul>
-                <li>Stay hydrated and rest in a quiet, dark room</li>
-                <li>Apply a cold compress to your forehead</li>
-                <li>Consider caffeine in moderation, which can sometimes help with headaches</li>
-            </ul>
-            <p><strong>Important:</strong> Consult a doctor if headaches are severe, persistent, or accompanied by other symptoms.</p>`
-        },
-        "allergy": {
-            title: "Allergy Relief Recommendations",
-            content: `<p>For allergy symptoms, consider these options:</p>
-            <h3>Common Medications:</h3>
-            <ul>
-                <li><strong>Loratadine (Claritin)</strong>: 10mg once daily</li>
-                <li><strong>Cetirizine (Zyrtec)</strong>: 5-10mg once daily</li>
-                <li><strong>Fexofenadine (Allegra)</strong>: 180mg once daily</li>
-                <li><strong>Diphenhydramine (Benadryl)</strong>: 25-50mg every 4-6 hours (may cause drowsiness)</li>
-            </ul>
-            <h3>Recommendations:</h3>
-            <ul>
-                <li>Use saline nasal sprays to relieve congestion</li>
-                <li>Keep windows closed during high pollen seasons</li>
-                <li>Shower after being outdoors to remove pollen</li>
-            </ul>
-            <p><strong>Note:</strong> Consult with a healthcare provider for persistent allergy symptoms.</p>`
-        },
-        "cold": {
-            title: "Cold Symptom Relief",
-            content: `<p>For cold symptoms, consider these approaches:</p>
-            <h3>Symptom Relief Options:</h3>
-            <ul>
-                <li><strong>Decongestants (Pseudoephedrine)</strong>: For nasal congestion (use with caution if you have high blood pressure)</li>
-                <li><strong>Guaifenesin (Mucinex)</strong>: 200-400mg every 4 hours for chest congestion</li>
-                <li><strong>Dextromethorphan (Robitussin DM)</strong>: For cough suppression</li>
-                <li><strong>Pain relievers</strong>: Acetaminophen or ibuprofen for body aches and fever</li>
-            </ul>
-            <h3>Self-care Recommendations:</h3>
-            <ul>
-                <li>Get plenty of rest and stay hydrated</li>
-                <li>Use a humidifier to ease congestion</li>
-                <li>Gargle with warm salt water for sore throat</li>
-            </ul>
-            <p><strong>Important:</strong> See a doctor if symptoms last more than 10 days or if you have difficulty breathing.</p>`
-        },
-        "default": {
-            title: "Medication Information",
-            content: `<p>Based on your query, here are some general recommendations:</p>
-            <h3>Important Considerations:</h3>
-            <ul>
-                <li>Always consult with a healthcare professional before starting any new medication</li>
-                <li>Disclose all current medications to avoid interactions</li>
-                <li>Follow dosage instructions carefully</li>
-                <li>Be aware of potential side effects</li>
-            </ul>
-            <h3>Common Medication Categories:</h3>
-            <ul>
-                <li><strong>Pain Relief:</strong> Acetaminophen, NSAIDs (ibuprofen, naproxen)</li>
-                <li><strong>Allergy:</strong> Antihistamines (loratadine, cetirizine)</li>
-                <li><strong>Digestive Issues:</strong> Antacids, H2 blockers, proton pump inhibitors</li>
-                <li><strong>Skin Conditions:</strong> Topical corticosteroids, antifungals</li>
-            </ul>
-            <p>For more specific recommendations, please describe your symptoms in more detail.</p>`
-        }
-    };
-    
-    const lowerQuestion = question.toLowerCase();
-    
-    if (lowerQuestion.includes("headache") || lowerQuestion.includes("migraine")) {
-        return responses.headache;
-    } else if (lowerQuestion.includes("allerg") || lowerQuestion.includes("hay fever")) {
-        return responses.allergy;
-    } else if (lowerQuestion.includes("cold") || lowerQuestion.includes("flu")) {
-        return responses.cold;
-    } else {
-        return responses.default;
-    }
-}
-
-// Handle medication suggestion request
+// Real AI integration
 function getMedicationSuggestion() {
     const question = userInput.value.trim();
     if (!question) {
@@ -162,25 +106,181 @@ function getMedicationSuggestion() {
         return;
     }
     
+    // Add to user history
+    currentUser.history.push({
+        question,
+        timestamp: new Date().toISOString()
+    });
+    
+    // Update users in localStorage
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('medai_users', JSON.stringify(users));
+    }
+    
     // Show loader
     loader.style.display = 'block';
     response.style.display = 'none';
     
-    // Simulate API delay
-    setTimeout(() => {
-        const aiResponse = generateAIResponse(question);
+    // Use real AI API
+    sendMessage(question);
+}
+
+// Real AI API call
+function sendMessage(question) {
+    const apiUrl = "https://api.just2chat.cn/v1/chat/completions";
+    const apiKey = "sk-AjyTBfmjHsUi5CprmHv4qRdRU6PC0UmsmG7z4HHWEHUkmP0n";
+    
+    const requestData = {
+        model: "deepseek-v3",
+        messages: [{
+            role: "system",
+            content: "You are a helpful medical assistant specialized in providing medication recommendations. Provide detailed, accurate, and safe medication suggestions based on the user's symptoms. Always include important safety information and remind users to consult with healthcare professionals. Format your response in markdown."
+        }, {
+            role: "user",
+            content: question
+        }],
+        stream: true
+    };
+    
+    fetch(apiUrl, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Request failed with status: ${response.status}`);
+        }
         
-        // Update response content
-        document.querySelector('.response-header h3').textContent = aiResponse.title;
-        responseContent.innerHTML = aiResponse.content;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let fullResponse = '';
         
-        // Hide loader, show response
+        function readStream() {
+            return reader.read().then(({ done, value }) => {
+                if (done) {
+                    // Hide loader and show response
+                    loader.style.display = 'none';
+                    response.style.display = 'block';
+                    
+                    // Add to user history
+                    currentUser.history[currentUser.history.length - 1].response = fullResponse;
+                    
+                    // Update users in localStorage
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) {
+                        users[userIndex] = currentUser;
+                        localStorage.setItem('medai_users', JSON.stringify(users));
+                    }
+                    
+                    return;
+                }
+                
+                const chunk = decoder.decode(value, { stream: true });
+                try {
+                    // Process each line (streaming responses often come as multiple chunks)
+                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                    lines.forEach(line => {
+                        if (line.startsWith('data: ')) {
+                            const data = line.substring(6);
+                            if (data === '[DONE]') return;
+                            
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.choices && parsed.choices[0].delta.content) {
+                                    fullResponse += parsed.choices[0].delta.content;
+                                    responseContent.innerHTML = marked.parse(fullResponse);
+                                }
+                            } catch (e) {
+                                console.error('Error parsing JSON:', e);
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error processing chunk:', e);
+                }
+                
+                return readStream();
+            });
+        }
+        
+        return readStream();
+    })
+    .catch(error => {
+        console.error("Request error:", error);
         loader.style.display = 'none';
         response.style.display = 'block';
-        
-        // Clear input
-        userInput.value = '';
-    }, 2000);
+        responseContent.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+    });
+}
+
+// Translate content to Chinese
+function translateContent() {
+    const content = responseContent.innerText;
+    if (!content) return;
+    
+    // Show loading indicator on button
+    translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+    translateBtn.disabled = true;
+    
+    // Simple translation service (in a real app, use a proper translation API)
+    const translationUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(content)}&langpair=en|zh-CN`;
+    
+    fetch(translationUrl)
+    .then(response => response.json())
+    .then(data => {
+        if (data.responseData && data.responseData.translatedText) {
+            responseContent.innerHTML = marked.parse(data.responseData.translatedText);
+            translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to English';
+            translateBtn.onclick = translateToEnglish;
+        } else {
+            alert('Translation failed. Please try again later.');
+        }
+    })
+    .catch(error => {
+        console.error('Translation error:', error);
+        alert('Translation failed. Please try again later.');
+    })
+    .finally(() => {
+        translateBtn.disabled = false;
+    });
+}
+
+// Translate content back to English
+function translateToEnglish() {
+    const content = responseContent.innerText;
+    if (!content) return;
+    
+    // Show loading indicator on button
+    translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+    translateBtn.disabled = true;
+    
+    // Simple translation service
+    const translationUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(content)}&langpair=zh-CN|en`;
+    
+    fetch(translationUrl)
+    .then(response => response.json())
+    .then(data => {
+        if (data.responseData && data.responseData.translatedText) {
+            responseContent.innerHTML = marked.parse(data.responseData.translatedText);
+            translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Chinese';
+            translateBtn.onclick = translateContent;
+        } else {
+            alert('Translation failed. Please try again later.');
+        }
+    })
+    .catch(error => {
+        console.error('Translation error:', error);
+        alert('Translation failed. Please try again later.');
+    })
+    .finally(() => {
+        translateBtn.disabled = false;
+    });
 }
 
 // Event Listeners
@@ -203,7 +303,28 @@ loginBtn.addEventListener('click', () => {
 googleLoginBtn.addEventListener('click', googleLogin);
 signupLink.addEventListener('click', (e) => {
     e.preventDefault();
-    alert('Sign up functionality would be implemented here. For this demo, use:\nEmail: user@example.com\nPassword: password123');
+    const email = prompt('Enter your email:');
+    if (!email) return;
+    
+    const password = prompt('Create a password:');
+    if (!password) return;
+    
+    const name = prompt('Enter your name:');
+    if (!name) return;
+    
+    const newUser = {
+        id: Date.now(),
+        email,
+        password,
+        name,
+        avatar: name.split(' ').map(n => n[0]).join(''),
+        history: []
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('medai_users', JSON.stringify(users));
+    
+    alert('Account created successfully! Please sign in with your new credentials.');
 });
 
 logoutBtn.addEventListener('click', logout);
@@ -216,8 +337,21 @@ userInput.addEventListener('keypress', (e) => {
     }
 });
 
-// Initialize the page to show login
+translateBtn.addEventListener('click', translateContent);
+
+// Initialize the application
 window.addEventListener('DOMContentLoaded', () => {
+    initLocalStorage();
     loginPage.style.display = 'flex';
     appContainer.style.display = 'none';
+    
+    // Check if user is already logged in (simulate session)
+    const lastUserEmail = localStorage.getItem('medai_lastUser');
+    if (lastUserEmail) {
+        const user = users.find(u => u.email === lastUserEmail);
+        if (user) {
+            currentUser = user;
+            showApp();
+        }
+    }
 });
