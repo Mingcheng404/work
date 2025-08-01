@@ -107,7 +107,7 @@ async function sendMessage() {
     
     try {
         // IMPORTANT: In production, replace this with your backend endpoint
-        const response = await fetch('YOUR_BACKEND_ENDPOINT', {
+        const response = await fetch('sk-AjyTBfmjHsUi5CprmHv4qRdRU6PC0UmsmG7z4HHWEHUkmP0n', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
