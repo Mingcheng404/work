@@ -121,7 +121,6 @@ function getMedicationSuggestion() {
     
     // Show loader
     loader.style.display = 'block';
-    response.style.display = 'none';
     
     // Use real AI API
     sendMessage(question);
