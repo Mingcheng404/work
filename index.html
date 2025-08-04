@@ -1,1 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI - Intelligent Medication Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0a84ff;
+            --dark-blue: #0057b8;
+            --light-blue: #e3f2fd;
+            --accent-blue: #4285f4;
+            --neon-blue: #00bfff;
+            --tech-purple: #8a2be2;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-dark: #202124;
+            --text-medium: #5f6368;
+            --text-light: #94a3b8;
+            --text-white: #f1f5f9;
+            --success: #34a853;
+            --warning: #fbbc05;
+            --error: #ea4335;
+            --gradient-tech: linear-gradient(135deg, #0a84ff 0%, #8a2be2 100%);
+            --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --gradient-ai: linear-gradient(135deg, #00bfff 0%, #8a2be2 100%);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(10, 132, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Login Page Styling */
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--gradient-dark);
+        }
+
+        .login-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-white);
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(10, 132, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .login-left h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--neon-blue), var(--tech-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-left p {
+            font-size: 1.1rem;
+            max-width: 500px;
+            opacity: 0.9;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .login-features {
+            margin-top: 30px;
+            list-style: none;
+        }
+
+        .login-features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+        }
+
+        .login-features i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            background: rgba(0, 191, 255, 0.1);
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 40px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-right::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+            z-index: 2;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--tech-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: var(--neon-blue);
+        }
+
+        .logo p {
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-white);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.2);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-tech);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .btn-primary:hover::after {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(10, 132, 255, 0.4);
+        }
+
+        .btn-google {
+            background-color: transparent;
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--neon-blue);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--text-light);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-light);
+        }
+
+        .signup-link a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Main App Styling */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+            background-color: var(--dark-bg);
+        }
+
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--tech-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-tech);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .logout-btn:hover {
+            color: var(--neon-blue);
+        }
+
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .app-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .app-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--tech-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .app-title p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .ai-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-header {
+            background: var(--gradient-ai);
+            padding: 25px 30px;
+            color: var(--white);
+        }
+
+        .ai-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+
+        .ai-body {
+            padding: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-white);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.2);
+        }
+
+        .response-container {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            background-color: rgba(10, 132, 255, 0.05);
+            border: 1px solid rgba(66, 133, 244, 0.2);
+            min-height: 200px;
+            display: none;
+            position: relative;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--neon-blue);
+        }
+
+        .response-content {
+            line-height: 1.7;
+            color: var(--text-white);
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .response-content h3 {
+            color: var(--neon-blue);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .response-content ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .response-content li {
+            margin-bottom: 8px;
+        }
+
+        .response-content strong {
+            color: var(--neon-blue);
+        }
+
+        .disclaimer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            max-width: 800px;
+            margin: 40px auto 0;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .translate-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .translate-btn:hover {
+            background: rgba(0, 191, 255, 0.1);
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loader-dots {
+            display: inline-flex;
+            gap: 6px;
+        }
+
+        .loader-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--neon-blue);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .loader-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loader-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Tech elements */
+        .tech-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+            background-image: 
+                linear-gradient(rgba(0, 191, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 191, 255, 0.3) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Typing bubble */
+        .typing-bubble {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            max-width: 90%;
+            align-self: flex-start;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .typing-bubble::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 15px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Chat container */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--gradient-tech);
+            color: white;
+            border-radius: 18px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            max-width: 90%;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-radius: 18px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            max-width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .login-left {
+                display: flex;
+            }
+            
+            .login-container {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .login-left, .login-right {
+                padding: 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .ai-container {
+                margin: 0 15px;
+            }
+            
+            .app-title h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* URL bar */
+        .url-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .url-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .url-item {
+            padding: 8px 20px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 14px;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .url-item.active {
+            background: var(--gradient-tech);
+            color: white;
+        }
+
+        .url-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- URL Navigation Bar -->
+    <div class="url-bar">
+        <div class="url-container">
+            <a href="#loginPage" class="url-item active" id="loginUrl">MedAI/login</a>
+            <a href="#appContainer" class="url-item" id="aiUrl">MedAI/AIfunction</a>
+        </div>
+    </div>
+    
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="tech-grid"></div>
+        <div class="login-left">
+            <h1>MedAI Medication Assistant</h1>
+            <p>Intelligent medication suggestions powered by advanced AI technology. Get personalized recommendations for your health needs.</p>
+            <p>Our AI assistant uses state-of-the-art medical knowledge to provide safe and effective medication recommendations based on your symptoms and health profile.</p>
+            <ul class="login-features">
+                <li><i class="fas fa-shield-alt"></i> Secure and HIPAA compliant platform</li>
+                <li><i class="fas fa-robot"></i> AI-powered medication analysis</li>
+                <li><i class="fas fa-user-md"></i> Developed with medical professionals</li>
+                <li><i class="fas fa-lock"></i> Encrypted data protection</li>
+                <li><i class="fas fa-history"></i> Medication history tracking</li>
+                <li><i class="fas fa-prescription"></i> Personalized treatment plans</li>
+                <li><i class="fas fa-comment-medical"></i> Interactive health assistant</li>
+            </ul>
+        </div>
+        <div class="login-right">
+            <div class="tech-grid"></div>
+            <div class="logo">
+                <h1><i class="fas fa-pills"></i> MedAI</h1>
+                <p>Intelligent Medication Assistant</p>
+            </div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" value="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" value="password123">
+                </div>
+                <button class="btn btn-primary" id="loginBtn">Sign In</button>
+                
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                
+                <button class="btn btn-google" id="googleLoginBtn">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+                
+                <a href="#" class="forgot-password">Forgot password?</a>
+                
+                <div class="signup-link">
+                    Don't have an account? <a href="#" id="signupLink">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Application -->
+    <div class="app-container" id="appContainer">
+        <nav class="navbar">
+            <div class="container navbar-content">
+                <a href="#" class="brand">
+                    <i class="fas fa-pills"></i> MedAI
+                </a>
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container main-content">
+            <div class="app-title">
+                <h1>AI Medication Assistant</h1>
+                <p>Get personalized medication suggestions based on your symptoms and medical history. Our AI analyzes your input to provide safe and effective recommendations.</p>
+            </div>
+            
+            <div class="ai-container">
+                <div class="ai-header">
+                    <h2><i class="fas fa-robot"></i> Ask our AI about medications</h2>
+                </div>
+                <div class="ai-body">
+                    <div class="input-group">
+                        <input type="text" id="userInput" class="form-control" placeholder="Describe your symptoms or ask about medications..." value="I have a headache and fever">
+                        <button class="btn btn-primary" id="submitBtn">Submit</button>
+                    </div>
+                    
+                    <div class="loader" id="loader">
+                        <div class="loader-dots">
+                            <div class="loader-dot"></div>
+                            <div class="loader-dot"></div>
+                            <div class="loader-dot"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-container" id="chatContainer">
+                        <!-- Chat messages will appear here -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="translate-btn" id="translateBtn">
+                            <i class="fas fa-language"></i> Translate to Chinese
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="disclaimer">
+                <p><strong>Important:</strong> The information provided by MedAI is for educational purposes only and does not constitute medical advice. Always consult with a qualified healthcare professional before starting or changing any medication. Never disregard professional medical advice or delay seeking it because of something you have read on this platform.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginPage = document.getElementById('loginPage');
+        const appContainer = document.getElementById('appContainer');
+        const loginBtn = document.getElementById('loginBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const signupLink = document.getElementById('signupLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userAvatar = document.getElementById('userAvatar');
+        const submitBtn = document.getElementById('submitBtn');
+        const userInput = document.getElementById('userInput');
+        const loader = document.getElementById('loader');
+        const translateBtn = document.getElementById('translateBtn');
+        const chatContainer = document.getElementById('chatContainer');
+        const loginUrl = document.getElementById('loginUrl');
+        const aiUrl = document.getElementById('aiUrl');
+
+        // User accounts
+        let users = JSON.parse(localStorage.getItem('medai_users')) || [
+            { 
+                id: 1, 
+                email: 'user@example.com', 
+                password: 'password123', 
+                name: 'John Doe', 
+                avatar: 'JD',
+                history: [] 
+            },
+            { 
+                id: 2, 
+                email: 'doctor@example.com', 
+                password: 'securepass', 
+                name: 'Dr. Smith', 
+                avatar: 'DS',
+                history: [] 
+            }
+        ];
+
+        // Current user
+        let currentUser = null;
+
+        // Initialize local storage
+        function initLocalStorage() {
+            if (!localStorage.getItem('medai_users')) {
+                localStorage.setItem('medai_users', JSON.stringify(users));
+            }
+        }
+
+        // Login function
+        function login(email, password) {
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('medai_lastUser', user.email);
+                showApp();
+                updateUrl('app');
+                return true;
+            }
+            return false;
+        }
+
+        // Google login simulation
+        function googleLogin() {
+            const googleUser = {
+                id: Date.now(),
+                name: 'Google User',
+                avatar: 'GU',
+                email: 'googleuser@example.com',
+                history: []
+            };
+            
+            // Add to users if not exists
+            const existingUser = users.find(u => u.email === googleUser.email);
+            if (!existingUser) {
+                users.push(googleUser);
+                localStorage.setItem('medai_users', JSON.stringify(users));
+            }
+            
+            currentUser = googleUser;
+            localStorage.setItem('medai_lastUser', googleUser.email);
+            showApp();
+            updateUrl('app');
+        }
+
+        // Show main application
+        function showApp() {
+            userAvatar.textContent = currentUser.avatar;
+            appContainer.style.display = 'block';
+            loginPage.style.display = 'none';
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('medai_lastUser');
+            appContainer.style.display = 'none';
+            loginPage.style.display = 'flex';
+            // Clear input fields
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            // Clear chat
+            chatContainer.innerHTML = '';
+            updateUrl('login');
+        }
+
+        // Real AI integration
+        function getMedicationSuggestion() {
+            const question = userInput.value.trim();
+            if (!question) {
+                alert('Please enter your question or symptoms');
+                return;
+            }
+            
+            // Add user message to chat
+            addMessageToChat(question, 'user');
+            
+            // Show loader
+            loader.style.display = 'block';
+            
+            // Use real AI API
+            sendMessage(question);
+            
+            // Clear input
+            userInput.value = '';
+        }
+
+        // Real AI API call
+        function sendMessage(question) {
+            const apiUrl = "https://api.probex.top/v1/chat/completions";
+            const apiKey = "sk-AjyTBfmjHsUi5CprmHv4qRdRU6PC0UmsmG7z4HHWEHUkmP0n";
+            
+            const requestData = {
+                model: "deepseek-v3",
+                messages: [{
+                    role: "system",
+                    content: "You are a helpful medical assistant specialized in providing medication recommendations. Provide detailed, accurate, and safe medication suggestions based on the user's symptoms. Always include important safety information and remind users to consult with healthcare professionals. Format your response in markdown."
+                }, {
+                    role: "user",
+                    content: question
+                }],
+                stream: true
+            };
+            
+            // Add AI typing indicator
+            addTypingIndicator();
+            
+            fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Request failed with status: ${response.status}`);
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let fullResponse = '';
+                let aiMessageId = Date.now().toString();
+                
+                // Create AI message container
+                createAiMessageContainer(aiMessageId);
+                
+                function readStream() {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            // Hide loader
+                            loader.style.display = 'none';
+                            
+                            // Remove typing indicator
+                            document.querySelector('.typing-indicator')?.remove();
+                            
+                            // Add to user history
+                            if (currentUser) {
+                                currentUser.history.push({
+                                    question,
+                                    response: fullResponse,
+                                    timestamp: new Date().toISOString()
+                                });
+                                
+                                // Update users in localStorage
+                                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                                if (userIndex !== -1) {
+                                    users[userIndex] = currentUser;
+                                    localStorage.setItem('medai_users', JSON.stringify(users));
+                                }
+                            }
+                            
+                            return;
+                        }
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        try {
+                            // Process each line
+                            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                            lines.forEach(line => {
+                                if (line.startsWith('data: ')) {
+                                    const data = line.substring(6);
+                                    if (data === '[DONE]') return;
+                                    
+                                    try {
+                                        const parsed = JSON.parse(data);
+                                        if (parsed.choices && parsed.choices[0].delta.content) {
+                                            fullResponse += parsed.choices[0].delta.content;
+                                            updateAiMessage(aiMessageId, fullResponse);
+                                        }
+                                    } catch (e) {
+                                        console.error('Error parsing JSON:', e);
+                                    }
+                                }
+                            });
+                        } catch (e) {
+                            console.error('Error processing chunk:', e);
+                        }
+                        
+                        return readStream();
+                    });
+                }
+                
+                return readStream();
+            })
+            .catch(error => {
+                console.error("Request error:", error);
+                loader.style.display = 'none';
+                document.querySelector('.typing-indicator')?.remove();
+                addMessageToChat(`Error: ${error.message}`, 'ai');
+            });
+        }
+
+        // Add message to chat UI
+        function addMessageToChat(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.className = sender === 'user' ? 'user-message' : 'ai-message';
+            messageElement.innerHTML = marked.parse(message);
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Add typing indicator
+        function addTypingIndicator() {
+            const typingElement = document.createElement('div');
+            typingElement.className = 'typing-bubble typing-indicator';
+            typingElement.innerHTML = '<div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>';
+            chatContainer.appendChild(typingElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Create AI message container
+        function createAiMessageContainer(id) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'ai-message';
+            messageElement.id = `ai-msg-${id}`;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageElement;
+        }
+
+        // Update AI message content
+        function updateAiMessage(id, content) {
+            const messageElement = document.getElementById(`ai-msg-${id}`);
+            if (messageElement) {
+                messageElement.innerHTML = marked.parse(content);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        // Translate content to Chinese
+        function translateContent() {
+            const lastAiMessage = chatContainer.querySelector('.ai-message:last-child');
+            if (!lastAiMessage) return;
+            
+            const content = lastAiMessage.innerText;
+            if (!content) return;
+            
+            // Show loading indicator on button
+            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+            translateBtn.disabled = true;
+            
+            // Simple translation service
+            const translationUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(content)}&langpair=en|zh-CN`;
+            
+            fetch(translationUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.responseData && data.responseData.translatedText) {
+                    lastAiMessage.innerHTML = marked.parse(data.responseData.translatedText);
+                    translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to English';
+                    translateBtn.onclick = translateToEnglish;
+                } else {
+                    alert('Translation failed. Please try again later.');
+                }
+            })
+            .catch(error => {
+                console.error('Translation error:', error);
+                alert('Translation failed. Please try again later.');
+            })
+            .finally(() => {
+                translateBtn.disabled = false;
+            });
+        }
+
+        // Translate content back to English
+        function translateToEnglish() {
+            const lastAiMessage = chatContainer.querySelector('.ai-message:last-child');
+            if (!lastAiMessage) return;
+            
+            const content = lastAiMessage.innerText;
+            if (!content) return;
+            
+            // Show loading indicator on button
+            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+            translateBtn.disabled = true;
+            
+            // Simple translation service
+            const translationUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(content)}&langpair=zh-CN|en`;
+            
+            fetch(translationUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.responseData && data.responseData.translatedText) {
+                    lastAiMessage.innerHTML = marked.parse(data.responseData.translatedText);
+                    translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Chinese';
+                    translateBtn.onclick = translateContent;
+                } else {
+                    alert('Translation failed. Please try again later.');
+                }
+            })
+            .catch(error => {
+                console.error('Translation error:', error);
+                alert('Translation failed. Please try again later.');
+            })
+            .finally(() => {
+                translateBtn.disabled = false;
+            });
+        }
+
+        // Update URL display
+        function updateUrl(page) {
+            if (page === 'login') {
+                loginUrl.classList.add('active');
+                aiUrl.classList.remove('active');
+                window.location.hash = '#loginPage';
+            } else {
+                aiUrl.classList.add('active');
+                loginUrl.classList.remove('active');
+                window.location.hash = '#appContainer';
+            }
+        }
+
+        // Event Listeners
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            if (login(email, password)) {
+                updateUrl('app');
+            } else {
+                alert('Invalid email or password');
+            }
+        });
+
+        googleLoginBtn.addEventListener('click', googleLogin);
+        signupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = prompt('Enter your email:');
+            if (!email) return;
+            
+            const password = prompt('Create a password:');
+            if (!password) return;
+            
+            const name = prompt('Enter your name:');
+            if (!name) return;
+            
+            const newUser = {
+                id: Date.now(),
+                email,
+                password,
+                name,
+                avatar: name.split(' ').map(n => n[0]).join(''),
+                history: []
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('medai_users', JSON.stringify(users));
+            
+            alert('Account created successfully! Please sign in with your new credentials.');
+        });
+
+        logoutBtn.addEventListener('click', logout);
+
+        submitBtn.addEventListener('click', getMedicationSuggestion);
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                getMedicationSuggestion();
+            }
+        });
+
+        translateBtn.addEventListener('click', translateContent);
+        
+        // URL navigation
+        loginUrl.addEventListener('click', (e) => {
+            e.preventDefault();
+            appContainer.style.display = 'none';
+            loginPage.style.display = 'flex';
+            updateUrl('login');
+        });
+        
+        aiUrl.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lastUserEmail = localStorage.getItem('medai_lastUser');
+            if (lastUserEmail) {
+                const user = users.find(u => u.email === lastUserEmail);
+                if (user) {
+                    currentUser = user;
+                    showApp();
+                    updateUrl('app');
+                    return;
+                }
+            }
+            alert('Please login first');
+        });
+
+        // Initialize the application
+        window.addEventListener('DOMContentLoaded', () => {
+            initLocalStorage();
+            
+            // Check URL hash
+            if (window.location.hash === '#appContainer') {
+                const lastUserEmail = localStorage.getItem('medai_lastUser');
+                if (lastUserEmail) {
+                    const user = users.find(u => u.email === lastUserEmail);
+                    if (user) {
+                        currentUser = user;
+                        showApp();
+                        updateUrl('app');
+                        return;
+                    }
+                }
+            }
+            
+            // Default to login page
+            loginPage.style.display = 'flex';
+            appContainer.style.display = 'none';
+            updateUrl('login');
+        });
+    </script>
+</body>
+</html>
