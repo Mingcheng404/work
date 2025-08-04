@@ -79,8 +79,6 @@ function googleLogin() {
 
 // Show main application
 function showApp() {
-    loginPage.style.display = 'none';
-    appContainer.style.display = 'block';
     userAvatar.textContent = currentUser.avatar;
 }
 
@@ -118,9 +116,6 @@ function getMedicationSuggestion() {
         users[userIndex] = currentUser;
         localStorage.setItem('medai_users', JSON.stringify(users));
     }
-    
-    // Show loader
-    loader.syyle.display = 'None';
     
     // Use real AI API
     sendMessage(question);
@@ -353,6 +348,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
 
 
