@@ -120,7 +120,7 @@ function getMedicationSuggestion() {
     }
     
     // Show loader
-    loader.style.display = 'block';
+    loader.syyle.display = 'None';
     
     // Use real AI API
     sendMessage(question);
@@ -353,5 +353,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
 
