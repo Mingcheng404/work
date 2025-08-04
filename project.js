@@ -165,7 +165,6 @@ function sendMessage(question) {
                 if (done) {
                     // Hide loader and show response
                     loader.style.display = 'none';
-                    response.style.display = 'block';
                     
                     // Add to user history
                     currentUser.history[currentUser.history.length - 1].response = fullResponse;
@@ -354,4 +353,5 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
 
